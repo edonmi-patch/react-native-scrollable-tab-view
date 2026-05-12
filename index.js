@@ -359,7 +359,9 @@ const ScrollableTabView = createReactClass({
   },
 
   _children(children = this.props.children) {
-    return React.Children.map(children, (child) => child);
+    // React 19 made Children.map stricter about child validation; toArray
+    // produces an equivalent flat array without the traversal error.
+    return React.Children.toArray(children).filter(Boolean);
   },
 
   render() {
