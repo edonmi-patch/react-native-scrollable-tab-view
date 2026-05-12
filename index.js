@@ -359,9 +359,12 @@ const ScrollableTabView = createReactClass({
   },
 
   _children(children = this.props.children) {
-    // React 19 made Children.map stricter about child validation; toArray
-    // produces an equivalent flat array without the traversal error.
-    return React.Children.toArray(children).filter(Boolean);
+    // React 19 Children.toArray still throws on element children whose
+    // $$typeof check fails inside traverseAllChildrenImpl. Bypass the
+    // React traversal entirely with a plain Array conversion - every
+    // caller below just iterates or maps over the result.
+    if (!children) return [];
+    return (Array.isArray(children) ? children : [children]).filter(Boolean);
   },
 
   render() {
